@@ -1,5 +1,6 @@
 package com.apps.developerblog.app.ws.ui.controller;
 
+import com.apps.developerblog.app.ws.exceptions.UserServiceException;
 import com.apps.developerblog.app.ws.ui.model.request.UpdateUserDetailsModel;
 import com.apps.developerblog.app.ws.ui.model.request.UserDetailRequestModel;
 import com.apps.developerblog.app.ws.ui.model.response.UserRest;
@@ -36,6 +37,9 @@ public class UserController {
                            @RequestParam(value = "sort", required = false) String sort){
         String name = null;
         int length = name.length();
+
+        //throw new UserServiceException("A UserServiceException is thrown");
+
         return "get users was called with page = " + page + ", limit = " + limit + ", sort = " + sort;
     }
 
