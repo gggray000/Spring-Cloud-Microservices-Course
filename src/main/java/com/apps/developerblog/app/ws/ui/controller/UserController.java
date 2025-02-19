@@ -1,31 +1,38 @@
 package com.apps.developerblog.app.ws.ui.controller;
 
-import com.apps.developerblog.app.ws.exceptions.UserServiceException;
 import com.apps.developerblog.app.ws.ui.model.request.UpdateUserDetailsModel;
 import com.apps.developerblog.app.ws.ui.model.request.UserDetailRequestModel;
 import com.apps.developerblog.app.ws.ui.model.response.UserRest;
+import com.apps.developerblog.app.ws.userservice.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 @RestController
 @RequestMapping("users")
 public class UserController {
 
-    Map<String, UserRest> users;
+    private final UserService userService;
+
+    public UserController(UserService userServiceImpl){
+        this.userService = userServiceImpl;
+    }
+
+    /*UserService userService;
+    @Autowired
+    public UserController(UserService userServiceImpl){
+        this.userService = userServiceImpl;
+    }*/
 
     @GetMapping(path="/{userId}",
                 produces = {MediaType.APPLICATION_XML_VALUE,
                             MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UserRest> getUser(@PathVariable String userId){
-        if(users.containsKey(userId)){
-            return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
+        if(this.userService.getUsers().containsKey(userId)){
+            return new ResponseEntity<>(this.userService.getUsers().get(userId), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -37,9 +44,7 @@ public class UserController {
                            @RequestParam(value = "sort", required = false) String sort){
         String name = null;
         int length = name.length();
-
         //throw new UserServiceException("A UserServiceException is thrown");
-
         return "get users was called with page = " + page + ", limit = " + limit + ", sort = " + sort;
     }
 
@@ -51,17 +56,11 @@ public class UserController {
             MediaType.APPLICATION_XML_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public UserRest createUser(
+    public ResponseEntity<UserRest> createUser(
             @Valid
             @RequestBody UserDetailRequestModel userDetails){
-        UserRest returnedUser = new UserRest(userDetails.getFirstName(),
-                userDetails.getLastName(),
-                userDetails.getEmail());
-        String userId = UUID.randomUUID().toString();
-        returnedUser.setUserId(userId);
-        if(users == null) users = new HashMap<>();
-        users.put(userId, returnedUser);
-        return returnedUser;
+        UserRest returnedUser = userService.createUser(userDetails);
+        return new ResponseEntity<>(returnedUser, HttpStatus.OK);
     }
 
     @PutMapping(path="/{userId}",
@@ -76,16 +75,12 @@ public class UserController {
     public UserRest updateUser(@PathVariable String userId,
                              @Valid
                              @RequestBody UpdateUserDetailsModel userDetails){
-        UserRest storedUserDetails = users.get(userId);
-        storedUserDetails.setFirstName(userDetails.getFirstName());
-        storedUserDetails.setLastName(userDetails.getLastName());
-        users.put(userId, storedUserDetails);
-        return storedUserDetails;
+        return userService.updateUser(userId, userDetails);
     }
 
     @DeleteMapping(path="/{userId}")
     public ResponseEntity deleteUser(@PathVariable String userId){
-        users.remove(userId);
+        userService.removeUser(userId);
         return ResponseEntity.noContent().build();
 
     }
