@@ -5,5 +5,4 @@ import com.appsdeveloperbolg.photoapp.api.users.ui.model.CreateUserRequestModel;
 
 public interface UsersService {
     UserDto createUser(UserDto userDetails);
-    UserDto convertUserRequestModelToUserDto(CreateUserRequestModel userDetails);
 }

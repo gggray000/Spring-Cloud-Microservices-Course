@@ -33,8 +33,7 @@ public class UsersController {
     @PostMapping
     public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody CreateUserRequestModel userDetail){
 
-        UserDto userDto =
-                usersService.convertUserRequestModelToUserDto(userDetail);
+        UserDto userDto = convertUserRequestModelToUserDto(userDetail);
 
         UserDto createdUser = usersService.createUser(userDto);
 
@@ -43,6 +42,12 @@ public class UsersController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(responseModel);
+    }
+
+    private UserDto convertUserRequestModelToUserDto(CreateUserRequestModel userDetails){
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return modelMapper.map(userDetails, UserDto.class);
     }
 
     private CreateUserResponseModel convertUserDtoToResponseModel(UserDto userDto){

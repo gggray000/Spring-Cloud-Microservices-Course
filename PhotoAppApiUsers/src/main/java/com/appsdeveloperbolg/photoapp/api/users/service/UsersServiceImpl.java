@@ -3,7 +3,6 @@ package com.appsdeveloperbolg.photoapp.api.users.service;
 import com.appsdeveloperbolg.photoapp.api.users.data.UserEntity;
 import com.appsdeveloperbolg.photoapp.api.users.data.UsersRepository;
 import com.appsdeveloperbolg.photoapp.api.users.shared.UserDto;
-import com.appsdeveloperbolg.photoapp.api.users.ui.model.CreateUserRequestModel;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,6 @@ public class UsersServiceImpl implements UsersService{
         usersRepository.save(userEntity);
 
         return convertUserEntityToUserDto(userEntity);
-    }
-
-    @Override
-    public UserDto convertUserRequestModelToUserDto(CreateUserRequestModel userDetails){
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        return modelMapper.map(userDetails, UserDto.class);
     }
 
     private UserEntity convertUserDtoToUserEntity(UserDto userDto){
