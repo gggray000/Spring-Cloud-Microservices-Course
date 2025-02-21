@@ -6,6 +6,7 @@ import com.appsdeveloperbolg.photoapp.api.users.shared.UserDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -14,16 +15,19 @@ import java.util.UUID;
 public class UsersServiceImpl implements UsersService{
 
     UsersRepository usersRepository;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UsersServiceImpl(UsersRepository usersRepository){
+    public UsersServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
         this.usersRepository = usersRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     public UserDto createUser(UserDto userDetails) {
 
         userDetails.setUserId(UUID.randomUUID().toString());
+        userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
         UserEntity userEntity = this.convertUserDtoToUserEntity(userDetails);
         usersRepository.save(userEntity);
 
@@ -34,7 +38,6 @@ public class UsersServiceImpl implements UsersService{
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        userEntity.setEncryptedPassword("test");
         return userEntity;
     }
 
