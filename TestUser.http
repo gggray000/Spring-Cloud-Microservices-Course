@@ -1,0 +1,11 @@
+### POST request to example server
+POST http://localhost:8082/users-ws/users
+
+{
+"firstName":"kaya",
+"lastName":"queen",
+"password":"12345678",
+"email":"kaya@kaya.com"
+}
+
+###
