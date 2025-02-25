@@ -1,6 +1,7 @@
 package com.appsdeveloperblog.photoapp.api.gateway;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -34,11 +35,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             ServerHttpRequest request = exchange.getRequest();
 
-            if(request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+            if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
 
-            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0).trim();
             String jwt = authorizationHeader.replace("Bearer", "").trim();
 
             if(!isJwtValid(jwt)){
@@ -48,9 +49,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         };
     }
 
-    public static class Config {
-
-    }
+    public static class Config {}
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus status){
         ServerHttpResponse response = exchange.getResponse();
@@ -63,8 +62,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         String subject = null;
         // Usually fetched from a Config server.
         String tokenSecret = env.getProperty("token.secret");
-        byte[] secretKetBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-        SecretKey signingKey = new SecretKeySpec(secretKetBytes, SignatureAlgorithm.HS512.getJcaName());
+        byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
+        //SecretKey signingKey = Keys.hmacShaKeyFor(secretKeyBytes);
+        SecretKey signingKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS512.getJcaName());
 
         JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(signingKey)
