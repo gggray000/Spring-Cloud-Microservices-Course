@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="PhotoAppApiAccountManagement" />
+        <module name="PhotoAppApiConfigServer" />
         <module name="PhotoAppDiscoveryService" />
         <module name="ApiGateway" />
         <module name="PhotoAppApiUsers" />
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ApiGateway" options="-parameters" />
       <module name="PhotoAppApiAccountManagement" options="-parameters" />
+      <module name="PhotoAppApiConfigServer" options="-parameters" />
       <module name="PhotoAppApiUsers" options="-parameters" />
       <module name="PhotoAppDiscoveryService" options="-parameters" />
     </option>

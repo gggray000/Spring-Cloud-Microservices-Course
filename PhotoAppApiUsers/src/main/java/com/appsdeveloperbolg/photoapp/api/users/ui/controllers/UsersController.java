@@ -27,7 +27,9 @@ public class UsersController {
     public String status(){
 
         return "Users Service is Working on port "
-                + env.getProperty("local.server.port");
+                + env.getProperty("local.server.port")
+                + ", with token = "
+                + env.getProperty("token.secret");
     }
 
     @PostMapping
