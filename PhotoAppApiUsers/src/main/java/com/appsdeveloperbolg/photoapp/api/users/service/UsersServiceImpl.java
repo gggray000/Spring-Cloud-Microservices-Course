@@ -1,5 +1,6 @@
 package com.appsdeveloperbolg.photoapp.api.users.service;
 
+import com.appsdeveloperbolg.photoapp.api.users.data.AlbumsServiceClient;
 import com.appsdeveloperbolg.photoapp.api.users.data.UserEntity;
 import com.appsdeveloperbolg.photoapp.api.users.data.UsersRepository;
 import com.appsdeveloperbolg.photoapp.api.users.shared.UserDto;
@@ -29,18 +30,21 @@ public class UsersServiceImpl implements UsersService{
 
     UsersRepository usersRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
-    RestTemplate restTemplate;
+    //RestTemplate restTemplate;
     Environment environment;
+    AlbumsServiceClient albumsServiceClient;
 
     @Autowired
     public UsersServiceImpl(UsersRepository usersRepository,
                             BCryptPasswordEncoder bCryptPasswordEncoder,
-                            RestTemplate restTemplate,
-                            Environment environment){
+                            //RestTemplate restTemplate,
+                            Environment environment,
+                            AlbumsServiceClient albumsServiceClient){
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.restTemplate = restTemplate;
+        //this.restTemplate = restTemplate;
         this.environment = environment;
+        this.albumsServiceClient = albumsServiceClient;
     }
 
     @Override
@@ -67,18 +71,18 @@ public class UsersServiceImpl implements UsersService{
         if(userEntity == null) throw new UsernameNotFoundException("User not found");
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-        String albumsUrl = String.format(environment.getProperty("albums.url"), userId);
+//        String albumsUrl = String.format(environment.getProperty("albums.url"), userId);
+//        ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(
+//                albumsUrl,
+//                HttpMethod.GET,
+//                null,
+//                new ParameterizedTypeReference<List<AlbumResponseModel>>() {}
+//        );
+//        List<AlbumResponseModel> albums =  albumsListResponse.getBody();
 
-        ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(
-                albumsUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<AlbumResponseModel>>() {}
-        );
+        List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
 
-        List<AlbumResponseModel> albumsList =  albumsListResponse.getBody();
-
-        userDto.setAlbumsList(albumsList);
+        userDto.setAlbums(albums);
 
         return userDto;
     }

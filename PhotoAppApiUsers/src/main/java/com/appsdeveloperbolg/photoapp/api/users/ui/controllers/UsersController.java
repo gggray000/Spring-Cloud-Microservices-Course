@@ -36,27 +36,24 @@ public class UsersController {
 
     @PostMapping
     public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody CreateUserRequestModel userDetail){
-
         UserDto userDto = convertUserRequestModelToUserDto(userDetail);
-
         UserDto createdUser = usersService.createUser(userDto);
-
         CreateUserResponseModel responseModel = convertUserDtoToResponseModel(createdUser);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(responseModel);
     }
 
-    @GetMapping(value="/{userId}",
-    produces={MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(
+            value="/{userId}",
+            produces={
+                MediaType.APPLICATION_XML_VALUE,
+                MediaType.APPLICATION_JSON_VALUE
+            })
     public ResponseEntity<UserResponseModel> getUsers(@PathVariable("userId") String userId){
-
         UserDto userDto = usersService.getUserByUserId(userId);
         UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
-
-
-    return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
     private UserDto convertUserRequestModelToUserDto(CreateUserRequestModel userDetails){

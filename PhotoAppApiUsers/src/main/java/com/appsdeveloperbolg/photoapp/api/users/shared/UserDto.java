@@ -16,8 +16,7 @@ public class UserDto implements Serializable {
     private String email;
     private String userId;
     private String encryptedPassword;
-
-    private List<AlbumResponseModel> albumsList;
+    private List<AlbumResponseModel> albums;
 
     public String getFirstName() {
         return firstName;
@@ -67,12 +66,12 @@ public class UserDto implements Serializable {
         this.encryptedPassword = encryptedPassword;
     }
 
-    public List<AlbumResponseModel> getAlbumsList() {
-        return albumsList;
+    public List<AlbumResponseModel> getAlbums() {
+        return albums;
     }
 
-    public void setAlbumsList(List<AlbumResponseModel> albumsList) {
-        this.albumsList = albumsList;
+    public void setAlbums(List<AlbumResponseModel> albums) {
+        this.albums = albums;
     }
 
 }
