@@ -6,6 +6,7 @@ import com.appsdeveloperbolg.photoapp.api.users.data.UsersRepository;
 import com.appsdeveloperbolg.photoapp.api.users.shared.UserDto;
 import com.appsdeveloperbolg.photoapp.api.users.ui.model.AlbumResponseModel;
 
+import feign.FeignException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,13 @@ public class UsersServiceImpl implements UsersService{
 //        );
 //        List<AlbumResponseModel> albums =  albumsListResponse.getBody();
 
-        List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
+        List<AlbumResponseModel> albums = null;
+        try {
+            albums = albumsServiceClient.getAlbums(userId);
+        } catch (FeignException e) {
+            System.out.println("Error in AlbumsServiceClient: " + e.getMessage());
+            albums = new ArrayList<>();
+        }
 
         userDto.setAlbums(albums);
 
