@@ -9,6 +9,8 @@ import com.appsdeveloperbolg.photoapp.api.users.ui.model.AlbumResponseModel;
 import feign.FeignException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,6 +36,7 @@ public class UsersServiceImpl implements UsersService{
     //RestTemplate restTemplate;
     Environment environment;
     AlbumsServiceClient albumsServiceClient;
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public UsersServiceImpl(UsersRepository usersRepository,
@@ -81,16 +84,14 @@ public class UsersServiceImpl implements UsersService{
 //        );
 //        List<AlbumResponseModel> albums =  albumsListResponse.getBody();
 
-        List<AlbumResponseModel> albums = null;
-        try {
-            albums = albumsServiceClient.getAlbums(userId);
-        } catch (FeignException e) {
-            System.out.println("Error in AlbumsServiceClient: " + e.getMessage());
-            albums = new ArrayList<>();
-        }
+        //try {
+        List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
+        //} catch (FeignException e) {
+        //    logger.error(e.getLocalizedMessage());
+        //    albums = new ArrayList<>();
+        //}
 
         userDto.setAlbums(albums);
-
         return userDto;
     }
 
