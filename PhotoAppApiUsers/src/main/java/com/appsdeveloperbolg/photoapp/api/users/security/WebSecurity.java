@@ -58,7 +58,9 @@ public class WebSecurity {
                         .requestMatchers(HttpMethod.POST, environment.getProperty("login.url.path")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(HttpMethod.GET, "/status/check").permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll())
+                        .requestMatchers(HttpMethod.GET,"/actuator/health").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/actuator/circuitbreakerevents").permitAll()
+                )
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session
