@@ -41,13 +41,13 @@ public class UsersServiceImpl implements UsersService{
     @Autowired
     public UsersServiceImpl(UsersRepository usersRepository,
                             BCryptPasswordEncoder bCryptPasswordEncoder,
-                            //RestTemplate restTemplate,
                             Environment environment,
+                            //RestTemplate restTemplate,
                             AlbumsServiceClient albumsServiceClient){
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        //this.restTemplate = restTemplate;
         this.environment = environment;
+        //this.restTemplate = restTemplate;
         this.albumsServiceClient = albumsServiceClient;
     }
 
@@ -75,21 +75,26 @@ public class UsersServiceImpl implements UsersService{
         if(userEntity == null) throw new UsernameNotFoundException("User not found");
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-//        String albumsUrl = String.format(environment.getProperty("albums.url"), userId);
-//        ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(
-//                albumsUrl,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<AlbumResponseModel>>() {}
-//        );
-//        List<AlbumResponseModel> albums =  albumsListResponse.getBody();
+/*  Rest Template approach
+        String albumsUrl = String.format(environment.getProperty("albums.url"), userId);
+        ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(
+                albumsUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<AlbumResponseModel>>() {}
+        );
+        List<AlbumResponseModel> albums =  albumsListResponse.getBody();*/
 
-        //try {
+/*      Try catch block approach (comparing using FeignErrorDecoder)
+        try {
+            List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
+        } catch (FeignException e) {
+            logger.error(e.getLocalizedMessage());
+            albums = new ArrayList<>();
+        }*/
+        logger.debug("Before calling albums Microservice");
         List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
-        //} catch (FeignException e) {
-        //    logger.error(e.getLocalizedMessage());
-        //    albums = new ArrayList<>();
-        //}
+        logger.debug("After calling albums Microservice");
 
         userDto.setAlbums(albums);
         return userDto;
