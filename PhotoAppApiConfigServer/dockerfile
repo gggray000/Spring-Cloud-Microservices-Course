@@ -1,0 +1,13 @@
+FROM eclipse-temurin:23
+
+# Create a volume for temporary files
+VOLUME /tmp
+
+# Copy the encryption key to the container
+COPY apiEncryptionKey.jks apiEncryptionKey.jks
+
+# Copy the application JAR file
+COPY target/PhotoAppApiConfigServer-0.0.1-SNAPSHOT.jar ConfigServer.jar
+
+# Run the application
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "ConfigServer.jar"]

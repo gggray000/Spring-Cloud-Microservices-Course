@@ -1,0 +1,7 @@
+FROM eclipse-temurin:23
+
+# Copy the application JAR file
+COPY target/PhotoAppDiscoveryService-0.0.1-SNAPSHOT.jar DiscoveryService.jar
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "DiscoveryService.jar"]
