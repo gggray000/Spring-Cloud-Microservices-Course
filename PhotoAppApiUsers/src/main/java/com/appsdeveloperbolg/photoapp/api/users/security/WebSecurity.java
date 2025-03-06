@@ -2,7 +2,6 @@ package com.appsdeveloperbolg.photoapp.api.users.security;
 
 import com.appsdeveloperbolg.photoapp.api.users.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -10,14 +9,15 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
@@ -53,14 +53,14 @@ public class WebSecurity {
         http.csrf((csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers( "/users/**").permitAll()
+                        .requestMatchers("/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, environment.getProperty("login.url.path")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(HttpMethod.GET, "/status/check").permitAll()
                         .requestMatchers(HttpMethod.GET,"/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET,"/actuator/circuitbreakerevents").permitAll()
                 )
+                .addFilter(new AuthorizationFilter(authenticationManager, environment))
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session
