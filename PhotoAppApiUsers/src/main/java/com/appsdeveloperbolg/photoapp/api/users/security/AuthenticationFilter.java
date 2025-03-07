@@ -41,6 +41,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         this.environment = environment;
     }
 
+    // Invoked when users try to log in.
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
@@ -60,6 +61,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
+    // Invoked when username and password are correct.
     @Override
     protected void successfulAuthentication(HttpServletRequest req,
                                             HttpServletResponse res,
@@ -73,6 +75,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS512.getJcaName());
         Instant now = Instant.now();
         String token = Jwts.builder()
+                .claim("scope", auth.getAuthorities())
                 .setSubject(userDetails.getUserId())
                 .setExpiration(Date.from(
                         now.plusMillis(Long.parseLong(environment.getProperty("token.expiration_time_millis")))

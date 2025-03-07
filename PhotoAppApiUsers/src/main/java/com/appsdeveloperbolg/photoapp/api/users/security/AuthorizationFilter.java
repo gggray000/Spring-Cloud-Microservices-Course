@@ -1,5 +1,6 @@
 package com.appsdeveloperbolg.photoapp.api.users.security;
 
+import com.appsdeveloperblog.photoapp.jwtauthorities.JwtClaimsParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -18,6 +20,7 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -58,21 +61,14 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
         if(tokenSecret==null) return null;
 
-        byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+        JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(token, tokenSecret);
+        String userId = jwtClaimsParser.getJwtSubject();
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        if (userId == null) return null;
 
-        String userId = (String) claims.getSubject();
-
-        if (userId == null) {
-            return null;
-        }
-
-        return new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(
+                userId,
+                null,
+                jwtClaimsParser.getUserAuthorities());
     }
 }

@@ -64,7 +64,8 @@ public class WebSecurity {
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
         return http.build();

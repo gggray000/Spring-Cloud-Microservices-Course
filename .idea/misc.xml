@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/ApiGateway/pom.xml" />
         <option value="$PROJECT_DIR$/PhotoAppApiConfigServer/pom.xml" />
         <option value="$PROJECT_DIR$/PhotoAppApiAlbums/pom.xml" />
+        <option value="$PROJECT_DIR$/JwtAuthorities/pom.xml" />
       </list>
     </option>
   </component>

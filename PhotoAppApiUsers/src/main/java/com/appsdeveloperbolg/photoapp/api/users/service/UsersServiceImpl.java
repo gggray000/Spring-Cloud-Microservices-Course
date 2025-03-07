@@ -1,8 +1,6 @@
 package com.appsdeveloperbolg.photoapp.api.users.service;
 
-import com.appsdeveloperbolg.photoapp.api.users.data.AlbumsServiceClient;
-import com.appsdeveloperbolg.photoapp.api.users.data.UserEntity;
-import com.appsdeveloperbolg.photoapp.api.users.data.UsersRepository;
+import com.appsdeveloperbolg.photoapp.api.users.data.*;
 import com.appsdeveloperbolg.photoapp.api.users.shared.UserDto;
 import com.appsdeveloperbolg.photoapp.api.users.ui.model.AlbumResponseModel;
 
@@ -17,6 +15,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -70,7 +71,7 @@ public class UsersServiceImpl implements UsersService{
     }
 
     @Override
-    public UserDto getUserByUserId(String userId) {
+    public UserDto getUserByUserId(String userId, String authorization) {
         UserEntity userEntity = usersRepository.findByUserId(userId);
         if(userEntity == null) throw new UsernameNotFoundException("User not found");
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
@@ -93,7 +94,7 @@ public class UsersServiceImpl implements UsersService{
             albums = new ArrayList<>();
         }*/
         logger.debug("Before calling albums Microservice");
-        List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId);
+        List<AlbumResponseModel> albums = albumsServiceClient.getAlbums(userId, authorization);
         logger.debug("After calling albums Microservice");
 
         userDto.setAlbums(albums);
@@ -112,16 +113,29 @@ public class UsersServiceImpl implements UsersService{
         return modelMapper.map(userEntity, UserDto.class);
     }
 
+    // Invoked by Spring Framework to find username and password when users try to log in.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = usersRepository.findByEmail(username);
         if(userEntity == null) throw new UsernameNotFoundException(username);
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<RoleEntity> roles = userEntity.getRoles();
+
+        roles.forEach((role) -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            Collection<AuthorityEntity> authorityEntities = role.getAuthorities();
+            authorityEntities.forEach((authorityEntity) -> {
+                authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+            });
+        });
+
         return new User(userEntity.getEmail(),
                         userEntity.getEncryptedPassword(),
                         true,
                         true,
                         true,
                         true,
-                        new ArrayList<>()) ;
+                        authorities
+        ) ;
     }
 }

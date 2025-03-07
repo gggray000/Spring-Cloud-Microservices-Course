@@ -51,12 +51,21 @@ public class UsersController {
                 MediaType.APPLICATION_XML_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
             })
-    @PreAuthorize("principal == #userId")
+
+    @PreAuthorize("hasRole('ADMIN') or principal == #userId")
+    //@PreAuthorize("principal == #userId")
     //@PostAuthorize("principal == returnObject.getBody().getUserId()")
-    public ResponseEntity<UserResponseModel> getUsers(@PathVariable("userId") String userId){
-        UserDto userDto = usersService.getUserByUserId(userId);
+    public ResponseEntity<UserResponseModel> getUsers(@PathVariable("userId") String userId,
+                                                      @RequestHeader("Authorization") String authorization) {
+        UserDto userDto = usersService.getUserByUserId(userId, authorization);
         UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELTE') or principal == #userId")
+    @DeleteMapping("/{userId}")
+    public String deleteUser(@PathVariable("userId") String userId){
+        return "Deleting user with id " + userId;
     }
 
     private UserDto convertUserRequestModelToUserDto(CreateUserRequestModel userDetails){
