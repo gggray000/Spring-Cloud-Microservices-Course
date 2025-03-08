@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/ApiGateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EurekaClientDemo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EurekaServerCluster/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JwtAuthorities/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/PhotoAppApiAccountManagement/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/PhotoAppApiAlbums/src/main/java" charset="UTF-8" />

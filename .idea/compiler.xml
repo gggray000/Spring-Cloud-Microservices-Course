@@ -8,7 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="JwtAuthorities" />
         <module name="PhotoAppApiAccountManagement" />
+        <module name="EurekaClientDemo" />
         <module name="PhotoAppApiConfigServer" />
+        <module name="EurekaServerCluster" />
         <module name="PhotoAppDiscoveryService" />
         <module name="ApiGateway" />
         <module name="PhotoAppApiAlbums" />
@@ -19,6 +21,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ApiGateway" options="-parameters" />
+      <module name="EurekaClientDemo" options="-parameters" />
+      <module name="EurekaServerCluster" options="-parameters" />
       <module name="JwtAuthorities" options="-parameters" />
       <module name="PhotoAppApiAccountManagement" options="-parameters" />
       <module name="PhotoAppApiAlbums" options="-parameters" />

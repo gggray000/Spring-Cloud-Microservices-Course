@@ -11,6 +11,8 @@
         <option value="$PROJECT_DIR$/PhotoAppApiConfigServer/pom.xml" />
         <option value="$PROJECT_DIR$/PhotoAppApiAlbums/pom.xml" />
         <option value="$PROJECT_DIR$/JwtAuthorities/pom.xml" />
+        <option value="$PROJECT_DIR$/EurekaServerCluster/pom.xml" />
+        <option value="$PROJECT_DIR$/EurekaClientDemo/pom.xml" />
       </list>
     </option>
   </component>
